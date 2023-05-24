@@ -1,4 +1,3 @@
-include ':wheel'
-include ':ScaleImage'
+include ':library'
 include ':app'
 rootProject.name = "library"
