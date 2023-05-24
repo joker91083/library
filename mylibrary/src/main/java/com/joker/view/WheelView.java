@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -41,6 +42,10 @@ public class WheelView extends ScrollView {
     private String normalColor = "";
     private String selectedColor = "";
     private String lineColor = "";
+    private int normalTextSize = 0;
+    private int selectedTextSize = 0;
+    private int normalPadding = 0;
+    private int selectedPadding = 0;
 
     public WheelView(Context context) {
         super(context);
@@ -173,17 +178,26 @@ public class WheelView extends ScrollView {
 
     private TextView createView(String item) {
         TextView tv = new TextView(context);
-        tv.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        tv.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         tv.setSingleLine(true);
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        if (selectedTextSize == 0) {
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        } else {
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, selectedTextSize);
+        }
         tv.setText(item);
         tv.setGravity(Gravity.CENTER);
-        int padding = dip2px(15);
+        int padding = 0;
+        if (selectedPadding == 0) {
+            padding = dip2px(6);
+        } else {
+            padding = dip2px(selectedPadding);
+        }
         tv.setPadding(padding, padding, padding, padding);
         if (0 == itemHeight) {
             itemHeight = getViewMeasuredHeight(tv);
             Log.d(TAG, "itemHeight: " + itemHeight);
-            views.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, itemHeight * displayItemCount, Gravity.CENTER_HORIZONTAL));
+            views.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, itemHeight * displayItemCount, Gravity.CENTER_HORIZONTAL));
             views.setGravity(Gravity.CENTER);
             LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) this.getLayoutParams();
             this.setLayoutParams(new LinearLayout.LayoutParams(lp.width, itemHeight * displayItemCount));
@@ -225,19 +239,51 @@ public class WheelView extends ScrollView {
                 return;
             }
             if (position == i) {
+//                itemView.setTextColor(context.getResources().getColor(R.color.black));
                 if (selectedColor == null || selectedColor.isEmpty()) {
                     itemView.setTextColor(Color.parseColor("#000000"));
                 } else {
                     itemView.setTextColor(Color.parseColor(selectedColor));
                 }
-//                itemView.setTextColor(context.getResources().getColor(R.color.black));
+
+                if (selectedTextSize == 0) {
+                    if (normalTextSize == 0) {
+                        itemView.setTextSize(20);
+                    } else {
+                        itemView.setTextSize(normalTextSize);
+                    }
+                } else {
+                    itemView.setTextSize(selectedTextSize);
+                }
+
+                if (selectedPadding == 0) {
+                    if (normalPadding == 0) {
+                        itemView.setPadding(dip2px(6), dip2px(6), dip2px(6), dip2px(6));
+                    } else {
+                        itemView.setPadding(dip2px(normalPadding), dip2px(normalPadding), dip2px(normalPadding), dip2px(normalPadding));
+                    }
+                } else {
+                    itemView.setPadding(dip2px(selectedPadding), dip2px(selectedPadding), dip2px(selectedPadding), dip2px(selectedPadding));
+                }
             } else {
+//                itemView.setTextColor(context.getResources().getColor(R.color.text_default_color));
                 if (normalColor == null || normalColor.isEmpty()) {
                     itemView.setTextColor(Color.parseColor("#4B5B76"));
                 } else {
                     itemView.setTextColor(Color.parseColor(normalColor));
                 }
-//                itemView.setTextColor(context.getResources().getColor(R.color.text_default_color));
+
+                if (normalTextSize == 0) {
+                    itemView.setTextSize(20);
+                } else {
+                    itemView.setTextSize(normalTextSize);
+                }
+
+                if (normalPadding == 0) {
+                    itemView.setPadding(dip2px(6), dip2px(6), dip2px(6), dip2px(6));
+                } else {
+                    itemView.setPadding(dip2px(normalPadding), dip2px(normalPadding), dip2px(normalPadding), dip2px(normalPadding));
+                }
             }
         }
     }
@@ -356,6 +402,22 @@ public class WheelView extends ScrollView {
 
     public void setLineColor(String lineColor) {
         this.lineColor = lineColor;
+    }
+
+    public void setNormalTextSize(int normalTextSize) {
+        this.normalTextSize = normalTextSize;
+    }
+
+    public void setSelectedTextSize(int selectedTextSize) {
+        this.selectedTextSize = selectedTextSize;
+    }
+
+    public void setNormalPadding(int normalPadding) {
+        this.normalPadding = normalPadding;
+    }
+
+    public void setSelectedPadding(int selectedPadding) {
+        this.selectedPadding = selectedPadding;
     }
 
 
